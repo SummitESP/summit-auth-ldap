@@ -1,4 +1,5 @@
 from django_auth_ldap.backend import LDAPBackend, LDAPUser, LDAPUserGroups
+# from django.contrib.auth.models import DoesNotExist
 
 
 class SummitLDAPUser(LDAPUser):
@@ -42,9 +43,11 @@ class SummitLDAPBackend(LDAPBackend):
 
         kwargs = {
             username_field + '__iexact': username,
-            'defaults': {username_field: username.lower()}
         }
-        return model.objects.get_or_create(**kwargs)
+        try:
+            return model.objects.get(**kwargs)
+        except:
+            raise
 
     def django_to_ldap_username(self, username):
         return username.split('@')[0]
